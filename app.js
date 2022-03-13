@@ -1,8 +1,10 @@
+require("express-async-error");
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 const userRouter = require("./routers/userRouter.js");
+const error = require("./middlewares/error.js");
 
 app.use(express.json());
 app.use(cors());
@@ -12,5 +14,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use("/api/user", userRouter);
+
+app.use(error);
 
 module.exports = app;
