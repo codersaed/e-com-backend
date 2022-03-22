@@ -116,3 +116,42 @@ module.exports.updateProductById = async (req, res) => {
     }
   });
 };
+
+const body = {
+  order: "desc",
+  sortBy: "price",
+  limit: 6,
+  skip: 20,
+  filters: {
+    price: [1000, 2000],
+    category: ["604cc12312312", "60743dfgfdgfd", "60743dfdsfdd"],
+  },
+};
+module.exports.filterProducts = async (req, res) => {
+  let order = req.body.order === "desc" ? -1 : 1;
+  let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
+  let limit = req.body.limit ? parseInt(req.body.limit) : 10;
+  let skip = parseInt(req.body.skip);
+  let filters = req.body.filters;
+  let args = {};
+
+  for (let key in filters) {
+    if (filters[key].length > 0) {
+      if (key === "price") {
+        // { price: {$gte: 0, $lte: 1000 }}
+        args["price"] = {
+          $gte: filters["price"][0],
+          $lte: filters["price"][1],
+        };
+        console.log("args:", args);
+      }
+      if (key === "category") {
+        // category: { $in: [''] }
+        args["category"] = {
+          $in: filters["category"],
+        };
+        console.log("args:", args);
+      }
+    }
+  }
+};
